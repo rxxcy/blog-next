@@ -1,0 +1,47 @@
+{
+  "slug": "first-album",
+  "title": "第一个图集",
+  "description": "示例图集",
+  "date": "2026-02-10",
+  "cover": {
+    "source": "001.jpg",
+    "webp": "/albums/first-album/cover/cover.webp",
+    "jpg": "/albums/first-album/cover/cover.jpg",
+    "width": 1200,
+    "height": 800
+  },
+  "images": [
+    {
+      "id": "001",
+      "filename": "001.jpg",
+      "width": 4032,
+      "height": 3024,
+      "webp": "/albums/first-album/webp/001.webp",
+      "thumb": "/albums/first-album/thumbs/001.webp"
+    },
+    {
+      "id": "002",
+      "filename": "002.jpg",
+      "width": 4032,
+      "height": 3024,
+      "webp": "/albums/first-album/webp/002.webp",
+      "thumb": "/albums/first-album/thumbs/002.webp"
+    },
+    {
+      "id": "003",
+      "filename": "003.jpg",
+      "width": 4032,
+      "height": 3024,
+      "webp": "/albums/first-album/webp/003.webp",
+      "thumb": "/albums/first-album/thumbs/003.webp"
+    },
+    {
+      "id": "005",
+      "filename": "005.jpg",
+      "width": 4032,
+      "height": 3024,
+      "webp": "/albums/first-album/webp/005.webp",
+      "thumb": "/albums/first-album/thumbs/005.webp"
+    }
+  ]
+}

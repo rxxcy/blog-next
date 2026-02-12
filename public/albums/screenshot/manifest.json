@@ -1,0 +1,79 @@
+{
+  "slug": "screenshot",
+  "title": "截图",
+  "description": "没什么特别的",
+  "date": "2026-02-10",
+  "cover": {
+    "source": "001.png",
+    "webp": "/albums/screenshot/cover/cover.webp",
+    "jpg": "/albums/screenshot/cover/cover.jpg",
+    "width": 1200,
+    "height": 800
+  },
+  "images": [
+    {
+      "id": "001",
+      "filename": "001.png",
+      "width": 2560,
+      "height": 1271,
+      "webp": "/albums/screenshot/webp/001.webp",
+      "thumb": "/albums/screenshot/thumbs/001.webp"
+    },
+    {
+      "id": "002",
+      "filename": "002.png",
+      "width": 2560,
+      "height": 1271,
+      "webp": "/albums/screenshot/webp/002.webp",
+      "thumb": "/albums/screenshot/thumbs/002.webp"
+    },
+    {
+      "id": "003",
+      "filename": "003.png",
+      "width": 2560,
+      "height": 1271,
+      "webp": "/albums/screenshot/webp/003.webp",
+      "thumb": "/albums/screenshot/thumbs/003.webp"
+    },
+    {
+      "id": "005",
+      "filename": "005.png",
+      "width": 2560,
+      "height": 1271,
+      "webp": "/albums/screenshot/webp/005.webp",
+      "thumb": "/albums/screenshot/thumbs/005.webp"
+    },
+    {
+      "id": "006",
+      "filename": "006.png",
+      "width": 2560,
+      "height": 1271,
+      "webp": "/albums/screenshot/webp/006.webp",
+      "thumb": "/albums/screenshot/thumbs/006.webp"
+    },
+    {
+      "id": "007",
+      "filename": "007.png",
+      "width": 2560,
+      "height": 1271,
+      "webp": "/albums/screenshot/webp/007.webp",
+      "thumb": "/albums/screenshot/thumbs/007.webp"
+    },
+    {
+      "id": "008",
+      "filename": "008.png",
+      "width": 2560,
+      "height": 1271,
+      "webp": "/albums/screenshot/webp/008.webp",
+      "thumb": "/albums/screenshot/thumbs/008.webp"
+    },
+    {
+      "id": "009",
+      "filename": "009.png",
+      "width": 2560,
+      "height": 1271,
+      "webp": "/albums/screenshot/webp/009.webp",
+      "thumb": "/albums/screenshot/thumbs/009.webp"
+    }
+  ]
+}

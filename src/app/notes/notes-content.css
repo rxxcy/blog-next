@@ -1,0 +1,385 @@
+.mdx-content {
+  color: var(--foreground);
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+
+.dark .mdx-content {
+  color: color-mix(in oklab, var(--foreground) 72%, #94a3b8);
+}
+
+.mdx-content h1,
+.mdx-content h2,
+.mdx-content h3,
+.mdx-content h4 {
+  margin-top: 1.6em;
+  margin-bottom: 0.6em;
+  line-height: 1.25;
+  scroll-margin-top: 5.5rem;
+  font-family: "OPPOSans-Ver2-Medium", var(--font-geist-mono), sans-serif;
+}
+
+.dark .mdx-content h1,
+.dark .mdx-content h2,
+.dark .mdx-content h3,
+.dark .mdx-content h4 {
+  color: color-mix(in oklab, var(--foreground) 80%, #cbd5e1);
+}
+
+.mdx-content h1 {
+  font-size: 1.875rem;
+}
+
+.mdx-content h2 {
+  margin-top: 2.15em;
+  margin-bottom: 0.75em;
+  font-size: 1.3rem;
+}
+
+.mdx-content h3 {
+  margin-top: 1.7em;
+  margin-bottom: 0.58em;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: color-mix(in oklab, var(--foreground) 88%, #475569);
+}
+
+.mdx-content h2,
+.mdx-content h3 {
+  position: relative;
+}
+
+.mdx-content h2::before,
+.mdx-content h3::before {
+  content: "#";
+  position: absolute;
+  left: -1.2rem;
+  top: 0;
+  opacity: 0;
+  color: color-mix(in oklab, var(--muted-foreground) 72%, #64748b);
+  transform: translateX(0.15rem);
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+  pointer-events: none;
+}
+
+.mdx-content h3::before {
+  left: -1rem;
+}
+
+.mdx-content h2:hover::before,
+.mdx-content h2:focus-within::before,
+.mdx-content h3:hover::before,
+.mdx-content h3:focus-within::before {
+  opacity: 0.95;
+  transform: translateX(0);
+}
+
+.dark .mdx-content h3 {
+  color: color-mix(in oklab, var(--foreground) 72%, #94a3b8);
+}
+
+.mdx-content a {
+  text-decoration-color: color-mix(in oklab, currentColor 62%, #111827);
+  text-underline-offset: 0.14em;
+  text-decoration-thickness: 1px;
+}
+
+.dark .mdx-content a {
+  text-decoration-color: color-mix(in oklab, currentColor 65%, #334155);
+}
+
+.mdx-content h1 a,
+.mdx-content h2 a,
+.mdx-content h3 a,
+.mdx-content h4 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.mdx-content h1 a:hover,
+.mdx-content h2 a:hover,
+.mdx-content h3 a:hover,
+.mdx-content h4 a:hover {
+  text-decoration: none;
+}
+
+.mdx-content p {
+  margin: 0.9em 0;
+}
+
+.mdx-content p,
+.mdx-content li,
+.mdx-content td {
+  color: lab(65.896% 0 0);
+}
+
+.dark .mdx-content a {
+  color: color-mix(in oklab, var(--foreground) 76%, #93a6bb);
+}
+
+.dark .mdx-content a:hover {
+  color: color-mix(in oklab, var(--foreground) 86%, #cbd5e1);
+}
+
+.mdx-content ul,
+.mdx-content ol {
+  margin: 0.9em 0;
+}
+
+.mdx-content ul {
+  padding-left: 1.25rem;
+}
+
+.mdx-content ul {
+  list-style: disc;
+}
+
+.mdx-content ol {
+  list-style: none;
+  counter-reset: mdx-ol;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.mdx-content ol > li {
+  position: relative;
+  counter-increment: mdx-ol;
+  padding-left: 1.95rem;
+}
+
+.mdx-content ol > li::before {
+  content: counter(mdx-ol) ".";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1.6rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in oklab, var(--muted-foreground) 88%, transparent);
+}
+
+.mdx-content li {
+  margin: 0.3em 0;
+}
+
+.dark .mdx-content ul li::marker {
+  color: color-mix(in oklab, var(--foreground) 58%, #64748b);
+}
+
+.dark .mdx-content ol > li::before {
+  color: color-mix(in oklab, var(--foreground) 58%, #64748b);
+}
+
+.mdx-content hr {
+  margin: 1.5rem 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+.mdx-content blockquote {
+  margin: 1rem 0;
+  padding-left: 0.9rem;
+  border-left: 2px solid var(--border);
+  color: var(--muted-foreground);
+}
+
+.dark .mdx-content blockquote {
+  border-left-color: color-mix(in oklab, var(--border) 70%, #64748b);
+  color: color-mix(in oklab, var(--foreground) 70%, #94a3b8);
+}
+
+.mdx-content .mdx-code-block {
+  position: relative;
+  margin: 1rem 0;
+}
+
+.mdx-content pre {
+  margin: 0;
+  overflow-x: auto;
+  /* border: 1px solid var(--border); */
+  padding: 0.875rem 1rem;
+  background: #f8f8f8;
+  border-radius: 8px;
+}
+
+.dark .mdx-content pre {
+  border-color: color-mix(in oklab, var(--border) 80%, #475569);
+  background: #1f2530;
+}
+
+.mdx-content pre code {
+  background: transparent;
+  counter-reset: line;
+  display: block;
+}
+
+.mdx-content pre code > [data-line],
+.mdx-content pre code > .line {
+  position: relative;
+  display: block;
+  padding-left: 2.25rem;
+}
+
+.mdx-content pre code > [data-line]::before,
+.mdx-content pre code > .line::before {
+  counter-increment: line;
+  content: counter(line);
+  position: absolute;
+  left: 0;
+  width: 1.75rem;
+  padding-right: 0.5rem;
+  text-align: right;
+  color: color-mix(in oklab, var(--muted-foreground) 88%, transparent);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.mdx-content pre[data-language="bash"] code > [data-line],
+.mdx-content pre[data-language="bash"] code > .line,
+.mdx-content pre[data-language="sh"] code > [data-line],
+.mdx-content pre[data-language="sh"] code > .line,
+.mdx-content pre[data-language="shell"] code > [data-line],
+.mdx-content pre[data-language="shell"] code > .line,
+.mdx-content pre[data-language="zsh"] code > [data-line],
+.mdx-content pre[data-language="zsh"] code > .line,
+.mdx-content pre[data-language="console"] code > [data-line],
+.mdx-content pre[data-language="console"] code > .line {
+  display: block;
+  padding-left: 1.2rem;
+}
+
+.mdx-content pre[data-language="bash"] code > [data-line]::before,
+.mdx-content pre[data-language="bash"] code > .line::before,
+.mdx-content pre[data-language="sh"] code > [data-line]::before,
+.mdx-content pre[data-language="sh"] code > .line::before,
+.mdx-content pre[data-language="shell"] code > [data-line]::before,
+.mdx-content pre[data-language="shell"] code > .line::before,
+.mdx-content pre[data-language="zsh"] code > [data-line]::before,
+.mdx-content pre[data-language="zsh"] code > .line::before,
+.mdx-content pre[data-language="console"] code > [data-line]::before,
+.mdx-content pre[data-language="console"] code > .line::before {
+  content: "$";
+  counter-increment: none;
+  left: 0;
+  width: 0.9rem;
+  padding-right: 0.25rem;
+  text-align: left;
+}
+
+.mdx-content pre[data-language="bash"] code > [data-line]:empty::before,
+.mdx-content pre[data-language="bash"] code > .line:empty::before,
+.mdx-content pre[data-language="sh"] code > [data-line]:empty::before,
+.mdx-content pre[data-language="sh"] code > .line:empty::before,
+.mdx-content pre[data-language="shell"] code > [data-line]:empty::before,
+.mdx-content pre[data-language="shell"] code > .line:empty::before,
+.mdx-content pre[data-language="zsh"] code > [data-line]:empty::before,
+.mdx-content pre[data-language="zsh"] code > .line:empty::before,
+.mdx-content pre[data-language="console"] code > [data-line]:empty::before,
+.mdx-content pre[data-language="console"] code > .line:empty::before {
+  content: "";
+}
+
+.mdx-content pre code span {
+  color: var(--shiki-light);
+}
+
+.dark .mdx-content pre code span {
+  color: color-mix(in oklab, var(--shiki-dark) 76%, #cbd5e1);
+}
+
+.mdx-content .mdx-code-copy {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  z-index: 2;
+  opacity: 0.78;
+}
+
+.mdx-content .mdx-code-copy:hover {
+  opacity: 1;
+}
+
+.mdx-content :not(pre) > code {
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--muted) 72%, transparent);
+  padding: 0.1rem 0.35rem;
+  font-size: 0.875em;
+}
+
+.dark .mdx-content :not(pre) > code {
+  border-color: color-mix(in oklab, var(--border) 80%, #475569);
+  background: color-mix(in oklab, var(--muted) 54%, #111827);
+  color: color-mix(in oklab, var(--foreground) 74%, #cbd5e1);
+}
+
+.dark .reading-night-auto > article > header > h1 {
+  color: color-mix(in oklab, var(--foreground) 38%, #94a3b8);
+}
+
+.dark .reading-night-auto > article > header > p {
+  color: color-mix(in oklab, var(--foreground) 24%, #94a3b8);
+}
+
+.dark .reading-night-auto > article > header .text-muted-foreground {
+  color: color-mix(in oklab, var(--foreground) 22%, #94a3b8);
+}
+
+.dark .reading-night-auto .mdx-content {
+  color: color-mix(in oklab, var(--foreground) 30%, #94a3b8);
+}
+
+.dark .reading-night-auto .mdx-content h1,
+.dark .reading-night-auto .mdx-content h2,
+.dark .reading-night-auto .mdx-content h3,
+.dark .reading-night-auto .mdx-content h4 {
+  color: color-mix(in oklab, var(--foreground) 38%, #cbd5e1);
+}
+
+.dark .reading-night-auto .mdx-content a {
+  color: color-mix(in oklab, var(--foreground) 34%, #9fb3c8);
+}
+
+.dark .reading-night-auto .mdx-content a:hover {
+  color: color-mix(in oklab, var(--foreground) 45%, #cbd5e1);
+}
+
+.dark .reading-night-auto .mdx-content hr {
+  border-top-color: color-mix(in oklab, var(--border) 50%, #475569);
+}
+
+.dark .reading-night-auto .mdx-content blockquote {
+  border-left-color: color-mix(in oklab, var(--border) 48%, #475569);
+  color: color-mix(in oklab, var(--foreground) 28%, #94a3b8);
+}
+
+.mdx-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.875rem;
+}
+
+.mdx-content th,
+.mdx-content td {
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.625rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.dark .reading-night-auto .mdx-content td {
+  border-color: color-mix(in oklab, var(--border) 45%, #475569);
+}
+
+.dark .reading-night-auto .mdx-content th {
+  border-color: color-mix(in oklab, var(--border) 45%, #475569);
+  background: #0c1016;
+  color: color-mix(in oklab, var(--foreground) 36%, #cbd5e1);
+}
+
+.mdx-content th {
+  background: color-mix(in oklab, var(--muted) 80%, transparent);
+  font-weight: 600;
+}
