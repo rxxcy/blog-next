@@ -23,6 +23,40 @@ pnpm dev
 
 默认访问：`http://localhost:3000`
 
+## Docker 部署
+### 使用 Docker Compose（推荐）
+1. 在项目根目录准备环境变量（可选）：
+```bash
+NEXT_PUBLIC_SITE_URL=https://your-domain.com
+SITE_URL=https://your-domain.com
+POSTS_ACCESS_PASSWORD=your-notes-password
+ALBUM_ACCESS_PASSWORD=your-albums-password
+```
+2. 注入 git 信息（用于页脚 hash 和首页更新次数）：
+```powershell
+$env:GIT_COMMIT_SHA = git rev-parse --short HEAD
+$env:GIT_COMMIT_COUNT = git rev-list --count HEAD
+```
+3. 构建并启动：
+```bash
+docker compose up -d --build
+```
+4. 访问：`http://localhost:3000`
+
+### 使用 Docker 命令
+```bash
+docker build -t blog-next:latest \
+  --build-arg GIT_COMMIT_SHA=$(git rev-parse --short HEAD) \
+  --build-arg GIT_COMMIT_COUNT=$(git rev-list --count HEAD) .
+
+docker run -d --name blog-next -p 3000:3000 \
+  -e NEXT_PUBLIC_SITE_URL=https://your-domain.com \
+  -e SITE_URL=https://your-domain.com \
+  -e POSTS_ACCESS_PASSWORD=your-notes-password \
+  -e ALBUM_ACCESS_PASSWORD=your-albums-password \
+  blog-next:latest
+```
+
 ## 环境变量
 在项目根目录创建 `.env.local`：
 
@@ -137,6 +171,8 @@ pnpm album:generate
 
 ## 目录结构
 ```text
+Dockerfile
+docker-compose.yml
 src/
   app/
     page.tsx

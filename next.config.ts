@@ -43,6 +43,7 @@ function resolveGitCommitCount() {
 const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
+  output: "standalone",
   transpilePackages: ["@lobehub/icons"],
   env: {
     NEXT_PUBLIC_GIT_COMMIT_HASH: resolveGitCommitHash(),
