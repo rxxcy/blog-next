@@ -13,6 +13,9 @@ import {
   Suno,
 } from '@lobehub/icons'
 import { SkillIconsImage } from '@/components/skill-icons-image'
+import { PROJECTS } from '@/data/projects'
+import { readAlbumsList } from '@/lib/albums-data'
+import { readAllPosts } from '@/lib/posts'
 
 type StackIcon = {
   id: string
@@ -23,6 +26,13 @@ type StackIcon = {
 type StackGroup = {
   title: string
   icons: StackIcon[]
+}
+
+type AboutMetric = {
+  id: string
+  label: string
+  value: string
+  hint: string
 }
 
 function getDefaultSkillIconSrc(id: string) {
@@ -151,7 +161,52 @@ const APPLACATIONS_ICONS = [
   { id: 'openclaw', label: 'OpenClaw', Icon: OpenClaw },
 ]
 
-export default function Home() {
+async function getAboutMetrics(): Promise<AboutMetric[]> {
+  const [posts, { albums }] = await Promise.all([
+    readAllPosts({ includeDraft: false }),
+    readAlbumsList(),
+  ])
+
+  const completedProjects = PROJECTS.filter(
+    project => project.status === 'done'
+  ).length
+  const commitCountRaw = process.env.NEXT_PUBLIC_GIT_COMMIT_COUNT ?? ''
+  const commitCount = Number.parseInt(commitCountRaw, 10)
+  const commitCountText = Number.isFinite(commitCount)
+    ? commitCount.toLocaleString('en-US')
+    : '--'
+
+  return [
+    {
+      id: 'notes',
+      label: 'NOTES',
+      value: posts.length.toLocaleString('en-US'),
+      hint: '篇',
+    },
+    {
+      id: 'albums',
+      label: 'ALBUMS',
+      value: albums.length.toLocaleString('en-US'),
+      hint: '个图集',
+    },
+    {
+      id: 'projects',
+      label: 'PROJECTS',
+      value: `${completedProjects}/${PROJECTS.length}`,
+      hint: '已完成',
+    },
+    {
+      id: 'updates',
+      label: 'UPDATES',
+      value: commitCountText,
+      hint: '程序更新次数',
+    },
+  ]
+}
+
+export default async function Home() {
+  const aboutMetrics = await getAboutMetrics()
+
   return (
     <div className='space-y-10 px-4 md:px-0'>
       <section className='space-y-4'>
@@ -225,19 +280,23 @@ export default function Home() {
         <h1 className='text-2xl font-semibold tracking-tight mb-4'>Find Me</h1>
         <div className='flex flex-col gap-2 text-sm'>
           <a
-            href='https://github.com/'
+            href='https://github.com/rxxcy'
+            target='_blank'
+            rel='noreferrer'
             className='cursor-pointer text-foreground/80 transition-colors hover:text-foreground'
           >
             GitHub
           </a>
           <a
-            href='https://x.com/'
+            href='https://x.com/ikun977'
+            target='_blank'
+            rel='noreferrer'
             className='cursor-pointer text-foreground/80 transition-colors hover:text-foreground'
           >
             X / Twitter
           </a>
           <a
-            href='mailto:hello@example.com'
+            href='mailto:rxxcy@vip.qq.com'
             className='cursor-pointer text-foreground/80 transition-colors hover:text-foreground'
           >
             Email
@@ -248,8 +307,21 @@ export default function Home() {
       <section>
         <h1 className='text-2xl font-semibold tracking-tight mb-4'>About</h1>
         <p className='text-sm leading-6 text-foreground/80'>
-          记录灵感、实验与笔记。保持简洁，可读性优先。长期维护，轻量更新。
+          写点可复用的思路，也记录持续推进的实践。
         </p>
+        <ul className='mt-4 grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-4'>
+          {aboutMetrics.map(metric => (
+            <li key={metric.id} className='space-y-1'>
+              <p className='text-[10px] tracking-[0.14em] text-muted-foreground/90'>
+                {metric.label}
+              </p>
+              <p className='font-mono text-lg text-foreground tabular-nums'>
+                {metric.value}
+              </p>
+              <p className='text-xs text-muted-foreground'>{metric.hint}</p>
+            </li>
+          ))}
+        </ul>
       </section>
     </div>
   )

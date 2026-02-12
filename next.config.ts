@@ -23,12 +23,30 @@ function resolveGitCommitHash() {
   }
 }
 
+function resolveGitCommitCount() {
+  const envCount = process.env.VERCEL_GIT_COMMIT_COUNT ?? "";
+  if (envCount) {
+    return envCount;
+  }
+
+  try {
+    return execSync("git rev-list --count HEAD", {
+      stdio: ["ignore", "pipe", "ignore"],
+    })
+      .toString()
+      .trim();
+  } catch {
+    return "0";
+  }
+}
+
 const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   transpilePackages: ["@lobehub/icons"],
   env: {
     NEXT_PUBLIC_GIT_COMMIT_HASH: resolveGitCommitHash(),
+    NEXT_PUBLIC_GIT_COMMIT_COUNT: resolveGitCommitCount(),
   },
   images: {
     remotePatterns: [
