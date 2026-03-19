@@ -1,100 +1,54 @@
-"use client";
+import { notFound, redirect } from "next/navigation";
+import { NotesUnlockForm } from "@/components/notes-unlock-form";
+import { readPostBySlug } from "@/lib/posts";
+import { isValidPostSlug, isValidPostYear } from "@/lib/posts-auth";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { type FormEvent, Suspense, useMemo, useState } from "react";
+type NotesUnlockPageProps = {
+  searchParams: Promise<{
+    from?: string;
+    year?: string;
+    slug?: string;
+  }>;
+};
 
-const DEFAULT_REDIRECT = "/notes";
+function buildDefaultRedirect(year: string, slug: string) {
+  return `/notes/${year}/${slug}`;
+}
 
-function getSafeFrom(from: string | null) {
-  if (!from) return DEFAULT_REDIRECT;
-  if (!from.startsWith("/notes")) return DEFAULT_REDIRECT;
+function getSafeFrom(from: string | undefined, year: string, slug: string) {
+  const fallback = buildDefaultRedirect(year, slug);
+  if (!from) return fallback;
+  if (!from.startsWith("/notes/")) return fallback;
+  if (from.startsWith("/notes/unlock")) return fallback;
   return from;
 }
 
-function NotesUnlockContent() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const from = useMemo(
-    () => getSafeFrom(searchParams.get("from")),
-    [searchParams],
-  );
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [pending, setPending] = useState(false);
+export default async function NotesUnlockPage({
+  searchParams,
+}: NotesUnlockPageProps) {
+  const { from, year = "", slug = "" } = await searchParams;
+  if (!isValidPostYear(year) || !isValidPostSlug(slug)) {
+    notFound();
+  }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError("");
-    setPending(true);
+  const post = await readPostBySlug(year, slug, {
+    includeDraft: process.env.NODE_ENV !== "production",
+  });
+  if (!post) {
+    notFound();
+  }
 
-    try {
-      const response = await fetch("/api/notes/unlock", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({ password }),
-      });
-
-      if (!response.ok) {
-        const data = (await response.json().catch(() => ({}))) as {
-          message?: string;
-        };
-        setError(data.message ?? "验证失败，请重试。");
-        return;
-      }
-
-      router.replace(from);
-      router.refresh();
-    } finally {
-      setPending(false);
-    }
+  if (!post.requiresPassword) {
+    redirect(buildDefaultRedirect(year, slug));
   }
 
   return (
-    <section className="mx-auto w-full max-w-sm space-y-4 px-4 md:px-0">
-      <header className="space-y-1">
-        <h1 className="text-xl font-semibold tracking-tight">查看笔记</h1>
-        <p className="text-sm text-muted-foreground">请输入访问密码后继续。</p>
-      </header>
-
-      <form onSubmit={handleSubmit} className="space-y-3">
-        <label className="block text-sm text-foreground/80">
-          密码
-          <input
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            className="mt-1 block w-full border border-border bg-background px-3 py-2 text-sm outline-none transition-colors focus:border-foreground/40"
-            placeholder="输入访问密码"
-            required
-          />
-        </label>
-
-        {error ? (
-          <p className="text-sm text-destructive" role="alert">
-            {error}
-          </p>
-        ) : null}
-
-        <button
-          type="submit"
-          className="inline-flex h-9 items-center border border-border px-3 text-sm transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
-          disabled={pending}
-        >
-          {pending ? "验证中..." : "进入笔记"}
-        </button>
-      </form>
-    </section>
-  );
-}
-
-export default function NotesUnlockPage() {
-  return (
-    <Suspense
-      fallback={<section className="mx-auto w-full max-w-sm px-4 md:px-0" />}
-    >
-      <NotesUnlockContent />
-    </Suspense>
+    <NotesUnlockForm
+      from={getSafeFrom(from, year, slug)}
+      year={year}
+      slug={slug}
+      title={post.title}
+      passwordHint={post.passwordHint}
+    />
   );
 }

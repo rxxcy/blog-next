@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
+import { notFound, redirect } from "next/navigation";
 import { AutoNightReading } from "@/components/auto-night-reading";
 import { HistoryBackButton } from "@/components/history-back-button";
 import { NotesToc } from "@/components/notes-toc";
@@ -11,6 +12,11 @@ import {
   readPostBySlug,
   renderPostMdx,
 } from "@/lib/posts";
+import {
+  getPostAccessKey,
+  POSTS_AUTH_COOKIE,
+  parseUnlockedPostsCookie,
+} from "@/lib/posts-auth";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -48,6 +54,23 @@ export default async function NoteDetailPage({ params }: NotePageProps) {
 
   if (!post) {
     notFound();
+  }
+
+  if (post.requiresPassword) {
+    const postAccessKey = getPostAccessKey(post.year, post.slug);
+    const cookieStore = await cookies();
+    const unlockedPosts = parseUnlockedPostsCookie(
+      cookieStore.get(POSTS_AUTH_COOKIE)?.value,
+    );
+
+    if (!postAccessKey || !unlockedPosts.has(postAccessKey)) {
+      const searchParams = new URLSearchParams({
+        from: post.url,
+        year: post.year,
+        slug: post.slug,
+      });
+      redirect(`/notes/unlock?${searchParams.toString()}`);
+    }
   }
 
   const content = await renderPostMdx(post.body);

@@ -136,6 +136,7 @@ tags: [nextjs, mdx]
 - `updatedAt`
 - `aiPolished`（`true` 时详情页显示“本文已经过ai润色”）
 - `requiresPassword`
+- `password`（设置后该文章按单篇密码访问）
 - `passwordHint`
 
 ### 相册

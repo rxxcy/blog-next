@@ -7,6 +7,7 @@ import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import { mdxComponents } from "@/components/mdx-components";
+import { hasPostPassword } from "@/lib/posts-auth";
 
 type PostFrontmatter = {
   title?: string;
@@ -18,6 +19,7 @@ type PostFrontmatter = {
   updatedAt?: string;
   aiPolished?: boolean;
   requiresPassword?: boolean;
+  password?: string | number;
   passwordHint?: string;
 };
 
@@ -41,6 +43,7 @@ export type PostMeta = {
 
 export type Post = PostMeta & {
   body: string;
+  password?: string;
 };
 
 const POSTS_ROOT = path.join(process.cwd(), "content", "posts");
@@ -53,6 +56,14 @@ function normalizeTags(tags: PostFrontmatter["tags"]): string[] {
     .split(",")
     .map((tag) => tag.trim())
     .filter(Boolean);
+}
+
+function normalizePassword(password: PostFrontmatter["password"]) {
+  if (typeof password === "string" || typeof password === "number") {
+    const normalized = String(password).trim();
+    return normalized ? normalized : undefined;
+  }
+  return undefined;
 }
 
 function countWords(content: string) {
@@ -87,6 +98,9 @@ async function readPostFromFile(
   const tags = normalizeTags(fm.tags);
   const draft = Boolean(fm.draft);
   const body = parsed.content.trim();
+  const password = normalizePassword(fm.password);
+  const requiresPassword =
+    Boolean(fm.requiresPassword) || hasPostPassword(password);
 
   return {
     year,
@@ -101,7 +115,8 @@ async function readPostFromFile(
     cover: fm.cover,
     updatedAt: fm.updatedAt,
     aiPolished: Boolean(fm.aiPolished),
-    requiresPassword: Boolean(fm.requiresPassword),
+    requiresPassword,
+    password,
     passwordHint: fm.passwordHint,
     wordCount: countWords(body),
     body,

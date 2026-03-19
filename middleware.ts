@@ -5,45 +5,10 @@ import {
   isValidAlbumSlug,
   parseUnlockedAlbumsCookie,
 } from "@/lib/albums-auth";
-import { POSTS_AUTH_COOKIE, POSTS_PASSWORD_ENV } from "@/lib/posts-auth";
 
 type AlbumsAccessIndex = {
   albums?: Record<string, { requiresPassword?: boolean }>;
 };
-
-function handleProtectedSection(
-  request: NextRequest,
-  options: {
-    sectionBase: "/notes";
-    unlockPath: "/notes/unlock";
-    cookieName: string;
-    envName: string;
-  },
-) {
-  const configuredPassword = process.env[options.envName];
-  if (!configuredPassword) {
-    return null;
-  }
-
-  const { pathname, search } = request.nextUrl;
-  if (!pathname.startsWith(options.sectionBase)) {
-    return null;
-  }
-
-  if (pathname === options.unlockPath) {
-    return NextResponse.next();
-  }
-
-  const unlocked = request.cookies.get(options.cookieName)?.value === "1";
-  if (unlocked) {
-    return NextResponse.next();
-  }
-
-  const unlockUrl = request.nextUrl.clone();
-  unlockUrl.pathname = options.unlockPath;
-  unlockUrl.searchParams.set("from", `${pathname}${search}`);
-  return NextResponse.redirect(unlockUrl);
-}
 
 function getAlbumSlugFromPathname(pathname: string) {
   if (pathname === "/albums" || pathname === "/albums/") return null;
@@ -135,17 +100,9 @@ export async function middleware(request: NextRequest) {
   const albumsResult = await handleProtectedAlbumRoutes(request);
   if (albumsResult) return albumsResult;
 
-  const notesResult = handleProtectedSection(request, {
-    sectionBase: "/notes",
-    unlockPath: "/notes/unlock",
-    cookieName: POSTS_AUTH_COOKIE,
-    envName: POSTS_PASSWORD_ENV,
-  });
-  if (notesResult) return notesResult;
-
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/albums/:path*", "/notes/:path*"],
+  matcher: ["/albums/:path*"],
 };
