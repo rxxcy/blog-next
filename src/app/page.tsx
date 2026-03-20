@@ -17,6 +17,9 @@ import { PROJECTS } from '@/data/projects'
 import { readAlbumsList } from '@/lib/albums-data'
 import { readAllPosts } from '@/lib/posts'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 type StackIcon = {
   id: string
   label: string
