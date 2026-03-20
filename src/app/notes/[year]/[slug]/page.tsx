@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
+import { cache } from "react";
 import { AutoNightReading } from "@/components/auto-night-reading";
 import { HistoryBackButton } from "@/components/history-back-button";
 import { NotesToc } from "@/components/notes-toc";
@@ -25,6 +26,22 @@ type NotePageProps = {
   params: Promise<{ year: string; slug: string }>;
 };
 
+const readCachedPost = cache(
+  async (year: string, slug: string, includeDraft: boolean) =>
+    readPostBySlug(year, slug, { includeDraft }),
+);
+
+async function isPostUnlocked(year: string, slug: string) {
+  const postAccessKey = getPostAccessKey(year, slug);
+  if (!postAccessKey) return false;
+
+  const cookieStore = await cookies();
+  const unlockedPosts = parseUnlockedPostsCookie(
+    cookieStore.get(POSTS_AUTH_COOKIE)?.value,
+  );
+  return unlockedPosts.has(postAccessKey);
+}
+
 export async function generateStaticParams() {
   return getPostStaticParams();
 }
@@ -33,11 +50,17 @@ export async function generateMetadata({
   params,
 }: NotePageProps): Promise<Metadata> {
   const { year, slug } = await params;
-  const post = await readPostBySlug(year, slug, {
-    includeDraft: process.env.NODE_ENV !== "production",
-  });
+  const includeDraft = process.env.NODE_ENV !== "production";
+  const post = await readCachedPost(year, slug, includeDraft);
   if (!post) {
     return { title: "文章不存在" };
+  }
+
+  if (post.requiresPassword && !(await isPostUnlocked(post.year, post.slug))) {
+    return {
+      title: "受保护的文章 | 笔记",
+      description: "这篇文章需要访问密码。",
+    };
   }
 
   return {
@@ -48,22 +71,15 @@ export async function generateMetadata({
 
 export default async function NoteDetailPage({ params }: NotePageProps) {
   const { year, slug } = await params;
-  const post = await readPostBySlug(year, slug, {
-    includeDraft: process.env.NODE_ENV !== "production",
-  });
+  const includeDraft = process.env.NODE_ENV !== "production";
+  const post = await readCachedPost(year, slug, includeDraft);
 
   if (!post) {
     notFound();
   }
 
   if (post.requiresPassword) {
-    const postAccessKey = getPostAccessKey(post.year, post.slug);
-    const cookieStore = await cookies();
-    const unlockedPosts = parseUnlockedPostsCookie(
-      cookieStore.get(POSTS_AUTH_COOKIE)?.value,
-    );
-
-    if (!postAccessKey || !unlockedPosts.has(postAccessKey)) {
+    if (!(await isPostUnlocked(post.year, post.slug))) {
       const searchParams = new URLSearchParams({
         from: post.url,
         year: post.year,

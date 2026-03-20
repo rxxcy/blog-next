@@ -119,7 +119,7 @@ New-Item -ItemType Directory -Force public/albums | Out-Null
 ```mdx
 ---
 title: Hello
-date: 2026-02-12
+date: "2026-02-12"
 summary: 简短摘要
 tags: [nextjs, mdx]
 ---
@@ -129,7 +129,7 @@ tags: [nextjs, mdx]
 
 常用 frontmatter 字段：
 - `title`
-- `date`（`YYYY-MM-DD`）
+- `date`（`YYYY-MM-DD`，建议加引号）
 - `summary`
 - `tags`
 - `draft`（`true` 时生产环境不展示）

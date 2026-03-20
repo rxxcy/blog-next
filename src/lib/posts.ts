@@ -11,12 +11,12 @@ import { hasPostPassword } from "@/lib/posts-auth";
 
 type PostFrontmatter = {
   title?: string;
-  date?: string;
+  date?: string | Date | number;
   summary?: string;
   tags?: string[] | string;
   draft?: boolean;
   cover?: string;
-  updatedAt?: string;
+  updatedAt?: string | Date | number;
   aiPolished?: boolean;
   requiresPassword?: boolean;
   password?: string | number;
@@ -66,6 +66,63 @@ function normalizePassword(password: PostFrontmatter["password"]) {
   return undefined;
 }
 
+function normalizeFrontmatterDatePart(
+  value: PostFrontmatter["date"],
+  fallback: string,
+) {
+  if (typeof value === "string") {
+    const normalized = value.trim();
+    if (!normalized) return fallback;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(normalized)) return normalized;
+
+    const parsed = new Date(normalized);
+    if (!Number.isNaN(parsed.getTime())) {
+      return parsed.toISOString().slice(0, 10);
+    }
+    return normalized;
+  }
+
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return value.toISOString().slice(0, 10);
+  }
+
+  if (typeof value === "number" && Number.isFinite(value)) {
+    const parsed = new Date(value);
+    if (!Number.isNaN(parsed.getTime())) {
+      return parsed.toISOString().slice(0, 10);
+    }
+  }
+
+  return fallback;
+}
+
+function normalizeFrontmatterDateTime(value: PostFrontmatter["updatedAt"]) {
+  if (typeof value === "string") {
+    const normalized = value.trim();
+    if (!normalized) return undefined;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(normalized)) return normalized;
+
+    const parsed = new Date(normalized);
+    if (!Number.isNaN(parsed.getTime())) {
+      return parsed.toISOString();
+    }
+    return normalized;
+  }
+
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return value.toISOString();
+  }
+
+  if (typeof value === "number" && Number.isFinite(value)) {
+    const parsed = new Date(value);
+    if (!Number.isNaN(parsed.getTime())) {
+      return parsed.toISOString();
+    }
+  }
+
+  return undefined;
+}
+
 function countWords(content: string) {
   return content
     .replace(/```[\s\S]*?```/g, " ")
@@ -93,12 +150,13 @@ async function readPostFromFile(
   const fm = parsed.data as PostFrontmatter;
 
   const title = (fm.title || slug).trim();
-  const date = fm.date || `${year}-01-01`;
+  const date = normalizeFrontmatterDatePart(fm.date, `${year}-01-01`);
   const summary = (fm.summary || "暂无摘要").trim();
   const tags = normalizeTags(fm.tags);
   const draft = Boolean(fm.draft);
   const body = parsed.content.trim();
   const password = normalizePassword(fm.password);
+  const updatedAt = normalizeFrontmatterDateTime(fm.updatedAt);
   const requiresPassword =
     Boolean(fm.requiresPassword) || hasPostPassword(password);
 
@@ -113,7 +171,7 @@ async function readPostFromFile(
     tags,
     draft,
     cover: fm.cover,
-    updatedAt: fm.updatedAt,
+    updatedAt,
     aiPolished: Boolean(fm.aiPolished),
     requiresPassword,
     password,
