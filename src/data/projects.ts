@@ -15,13 +15,14 @@ export type ProjectItem = {
 
 export const PROJECTS: ProjectItem[] = [
   {
-    id: "devnotes",
-    title: "DevNotes",
-    summary: "面向个人的开发笔记系统，强调快速记录和后续检索。",
+    id: "blog",
+    title: "Blog",
+    summary:
+      "当前在持续迭代的个人博客，包含笔记、相册、Moments、Now 页面和内容驱动的展示体系。",
     year: 2026,
     category: "Web",
     status: "in_progress",
-    tags: ["Next.js", "TypeScript", "PostgreSQL"],
+    tags: ["Next.js", "TypeScript", "MDX"],
     repo: "",
     demo: "",
   },

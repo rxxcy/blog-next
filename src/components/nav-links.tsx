@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 type NavItem = {
@@ -20,9 +21,71 @@ const baseItemClass =
 
 export function NavLinks({ items, className, itemClassName }: NavLinksProps) {
   const pathname = usePathname();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
+  const [indicatorStyle, setIndicatorStyle] = useState<{
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+  } | null>(null);
+
+  useEffect(() => {
+    const activeItem = items.find((item) =>
+      item.href === "/" ? pathname === "/" : pathname.startsWith(item.href),
+    );
+
+    function updateIndicator() {
+      if (!activeItem) {
+        setIndicatorStyle(null);
+        return;
+      }
+
+      const container = containerRef.current;
+      const activeElement = itemRefs.current[activeItem.href];
+      if (!container || !activeElement) {
+        setIndicatorStyle(null);
+        return;
+      }
+
+      const containerRect = container.getBoundingClientRect();
+      const activeRect = activeElement.getBoundingClientRect();
+
+      setIndicatorStyle({
+        left: activeRect.left - containerRect.left,
+        top: activeRect.top - containerRect.top,
+        width: activeRect.width,
+        height: activeRect.height,
+      });
+    }
+
+    updateIndicator();
+
+    const resizeObserver = new ResizeObserver(updateIndicator);
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+    for (const item of items) {
+      const element = itemRefs.current[item.href];
+      if (element) resizeObserver.observe(element);
+    }
+
+    window.addEventListener("resize", updateIndicator);
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", updateIndicator);
+    };
+  }, [items, pathname]);
 
   return (
-    <div className={className}>
+    <div ref={containerRef} className={cn("relative", className)}>
+      {indicatorStyle ? (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute rounded-full bg-muted transition-[left,top,width,height] duration-250 ease-out motion-reduce:transition-none"
+          style={indicatorStyle}
+        />
+      ) : null}
       {items.map((item) => {
         const isActive =
           item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
@@ -31,11 +94,15 @@ export function NavLinks({ items, className, itemClassName }: NavLinksProps) {
           <Link
             key={item.href}
             href={item.href}
+            ref={(element) => {
+              itemRefs.current[item.href] = element;
+            }}
             aria-current={isActive ? "page" : undefined}
             className={cn(
               baseItemClass,
+              "relative z-10",
               itemClassName,
-              isActive && "bg-muted text-foreground",
+              isActive && "text-foreground",
             )}
           >
             {item.label}
