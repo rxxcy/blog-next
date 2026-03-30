@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 
 const actionLinkClass =
-  "cursor-pointer border-0 bg-transparent p-0 text-[11px] leading-[15px] text-[#0000EE] underline";
+  "cursor-pointer border-0 bg-transparent p-0 text-[11px] leading-[15px] text-[#0000EE] underline dark:text-[#7AA7FF]";
 
 export function NotFoundIeRefreshButton() {
   return (
@@ -23,12 +23,7 @@ export function NotFoundIeDetectButton() {
       type="button"
       className={actionLinkClass}
       title="Detect Settings"
-      onClick={() =>
-        window.prompt(
-          "Windows could not automatically discover network settings.",
-          "",
-        )
-      }
+      onClick={() => void 0}
     >
       Detect Network Settings
     </button>

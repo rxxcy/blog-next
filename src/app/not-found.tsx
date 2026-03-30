@@ -4,11 +4,12 @@ import {
   NotFoundIeRefreshButton,
 } from "@/components/not-found-ie-actions";
 
-const bodyTextClass = "text-[11px] leading-[15px] text-black";
+const bodyTextClass =
+  "text-[11px] leading-[15px] text-black dark:text-[#F5F5F5]";
 
 export default function NotFound() {
   return (
-    <section className="w-full bg-white px-4 py-6 text-black md:px-0">
+    <section className="w-full bg-white px-4 py-6 text-black dark:bg-[#111111] dark:text-[#F5F5F5] md:px-0">
       <table className="w-[400px] max-w-full border-separate border-spacing-[5px]">
         <tbody>
           <tr>
@@ -40,7 +41,7 @@ export default function NotFound() {
               </svg>
             </td>
             <td className="w-[360px] align-middle text-left">
-              <h1 className="text-[17px] leading-[20px] text-black">
+              <h1 className="text-[17px] leading-[20px] text-black dark:text-[#F5F5F5]">
                 The page cannot be displayed
               </h1>
             </td>
@@ -56,7 +57,7 @@ export default function NotFound() {
 
           <tr>
             <td colSpan={2} className={bodyTextClass}>
-              <div className="h-px bg-[#C0C0C0]" />
+              <div className="h-px bg-[#C0C0C0] dark:bg-[#5A5A5A]" />
               <p className="mt-3">Please try the following:</p>
               <ul className="mt-2 list-disc space-y-2 pl-5">
                 <li>
@@ -101,7 +102,7 @@ export default function NotFound() {
                 </li>
               </ul>
 
-              <h2 className="mt-6 text-[11px] leading-[15px] text-black">
+              <h2 className="mt-6 text-[11px] leading-[15px] text-black dark:text-[#F5F5F5]">
                 Cannot find page or DNS Error
                 <br />
                 Internet Explorer
