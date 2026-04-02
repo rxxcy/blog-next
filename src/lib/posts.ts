@@ -7,6 +7,10 @@ import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import { mdxComponents } from "@/components/mdx-components";
+import {
+  countPostCharacters,
+  formatPostCharacterCount,
+} from "@/lib/post-stats";
 import { hasPostPassword } from "@/lib/posts-auth";
 
 type PostFrontmatter = {
@@ -38,7 +42,7 @@ export type PostMeta = {
   aiPolished: boolean;
   requiresPassword: boolean;
   passwordHint?: string;
-  wordCount: number;
+  characterCount: number;
 };
 
 export type Post = PostMeta & {
@@ -123,16 +127,6 @@ function normalizeFrontmatterDateTime(value: PostFrontmatter["updatedAt"]) {
   return undefined;
 }
 
-function countWords(content: string) {
-  return content
-    .replace(/```[\s\S]*?```/g, " ")
-    .replace(/`[^`]*`/g, " ")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/[#>*_~-]/g, " ")
-    .split(/\s+/)
-    .filter(Boolean).length;
-}
-
 function comparePosts(a: PostMeta, b: PostMeta) {
   if (a.date !== b.date) return b.date.localeCompare(a.date);
   return a.title.localeCompare(b.title, "zh-CN");
@@ -176,7 +170,7 @@ async function readPostFromFile(
     requiresPassword,
     password,
     passwordHint: fm.passwordHint,
-    wordCount: countWords(body),
+    characterCount: countPostCharacters(body),
     body,
   };
 }
@@ -274,5 +268,5 @@ export function formatPostDate(date: string) {
 }
 
 export function formatWordCount(count: number) {
-  return `${count.toLocaleString("en-US")} 字`;
+  return formatPostCharacterCount(count);
 }

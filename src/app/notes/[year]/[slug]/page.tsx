@@ -111,7 +111,7 @@ export default async function NoteDetailPage({ params }: NotePageProps) {
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
               <time dateTime={post.date}>{formatPostDate(post.date)}</time>
               <span aria-hidden="true">•</span>
-              <span>{formatWordCount(post.wordCount)}</span>
+              <span>{formatWordCount(post.characterCount)}</span>
               {post.tags.length > 0 ? (
                 <>
                   <span aria-hidden="true">•</span>
