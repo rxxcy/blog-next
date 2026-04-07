@@ -1,6 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  resolveActiveHeadingId,
+  type TocHeadingMeasurement,
+} from "@/lib/notes-toc";
 import { cn } from "@/lib/utils";
 
 type TocItem = {
@@ -10,6 +14,7 @@ type TocItem = {
 };
 
 const HEADING_OFFSET = 120;
+const SHOW_TOP_AFTER_PX = 480;
 
 function collectTocItems() {
   const headings = Array.from(
@@ -29,28 +34,44 @@ function collectTocItems() {
     .filter((item): item is TocItem => item !== null);
 }
 
-function getActiveHeading(items: TocItem[]) {
-  if (items.length === 0) return "";
-
-  const marker = window.scrollY + HEADING_OFFSET;
-  let activeId = items[0].id;
+function readHeadingMeasurements(items: TocItem[]) {
+  const measurements: TocHeadingMeasurement[] = [];
 
   for (const item of items) {
     const element = document.getElementById(item.id);
     if (!element) continue;
-    if (element.offsetTop <= marker) {
-      activeId = item.id;
-      continue;
-    }
-    break;
+    measurements.push({
+      id: item.id,
+      top: element.offsetTop,
+      height: element.offsetHeight,
+    });
   }
 
-  return activeId;
+  return measurements;
+}
+
+function getActiveHeading(items: TocItem[]) {
+  if (items.length === 0) return "";
+
+  return resolveActiveHeadingId(readHeadingMeasurements(items), {
+    scrollY: window.scrollY,
+    viewportHeight: window.innerHeight,
+    documentHeight: document.documentElement.scrollHeight,
+    headingOffset: HEADING_OFFSET,
+  });
 }
 
 export function NotesToc() {
   const [items, setItems] = useState<TocItem[]>([]);
   const [activeId, setActiveId] = useState("");
+  const [showTopButton, setShowTopButton] = useState(false);
+
+  const handleScrollToTop = () => {
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+  };
 
   useEffect(() => {
     let rafId = 0;
@@ -64,6 +85,10 @@ export function NotesToc() {
           : nextItems,
       );
       setActiveId(getActiveHeading(nextItems));
+      const shouldShowTopButton = window.scrollY > SHOW_TOP_AFTER_PX;
+      setShowTopButton((prev) =>
+        prev === shouldShowTopButton ? prev : shouldShowTopButton,
+      );
     };
 
     const onScrollOrResize = () => {
@@ -82,21 +107,34 @@ export function NotesToc() {
     };
   }, []);
 
-  const visibleItems = useMemo(() => items.slice(0, 14), [items]);
-
-  if (visibleItems.length < 3) return null;
+  if (items.length < 3) return null;
 
   return (
     <aside className="fixed left-[min(calc(50%+30rem),calc(100vw-14rem))] top-24 hidden w-52 xl:block">
       <div className="space-y-2 border-l border-border pl-3">
-        <p className="text-xs uppercase tracking-wide text-muted-foreground">
-          TOC
-        </p>
-        <ol className="space-y-1">
-          {visibleItems.map((item) => (
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">
+            TOC
+          </p>
+          <button
+            type="button"
+            onClick={handleScrollToTop}
+            className={cn(
+              "cursor-pointer text-[11px] uppercase tracking-wide text-muted-foreground transition-all duration-200 hover:text-foreground motion-reduce:transition-none",
+              showTopButton
+                ? "translate-y-0 opacity-100"
+                : "pointer-events-none -translate-y-1 opacity-0",
+            )}
+          >
+            Top
+          </button>
+        </div>
+        <ol className="max-h-[calc(100vh-9rem)] space-y-1 overflow-y-auto pr-2">
+          {items.map((item) => (
             <li key={item.id}>
               <a
                 href={`#${item.id}`}
+                title={item.text}
                 onClick={(event) => {
                   event.preventDefault();
                   const target = document.getElementById(item.id);
@@ -105,7 +143,7 @@ export function NotesToc() {
                   history.replaceState(null, "", `#${item.id}`);
                 }}
                 className={cn(
-                  "block text-xs leading-5 text-muted-foreground transition-colors",
+                  "block truncate whitespace-nowrap text-xs leading-5 text-muted-foreground transition-colors",
                   item.level === 3 ? "pl-3" : "",
                   activeId === item.id
                     ? "text-foreground"

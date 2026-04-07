@@ -97,18 +97,20 @@ export default async function NoteDetailPage({ params }: NotePageProps) {
         <ReadingProgressDots />
         <NotesToc />
         <article className="space-y-6 px-4 md:px-0">
-          <header className="space-y-3">
+          <header className="space-y-4 md:space-y-5">
             <HistoryBackButton
               className="inline-flex cursor-pointer items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
               fallbackHref="/notes"
             >
               <span>cd ..</span>
             </HistoryBackButton>
-            <h1 className="text-2xl font-semibold tracking-tight">
+            <h1 className="max-w-4xl text-[1.75rem] font-semibold leading-tight tracking-[-0.03em] text-foreground md:text-[2.25rem]">
               {post.title}
             </h1>
-            <p className="text-sm text-muted-foreground">{post.summary}</p>
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+            {/* <p className="max-w-2xl text-[15px] leading-7 text-muted-foreground md:text-base">
+              {post.summary}
+            </p> */}
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 pt-1 text-[11px] text-muted-foreground/85">
               <time dateTime={post.date}>{formatPostDate(post.date)}</time>
               <span aria-hidden="true">•</span>
               <span>{formatWordCount(post.characterCount)}</span>

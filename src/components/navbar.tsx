@@ -73,7 +73,7 @@ export function Navbar() {
         aria-label="Primary"
         className={`mx-auto flex h-14 w-full max-w-4xl items-center transition-all duration-300 md:justify-between motion-reduce:transition-none ${
           scrolled
-            ? "mt-2 rounded-full border border-transparent bg-background/84 px-4 shadow-[0_10px_30px_-18px_rgba(15,23,42,0.45),0_1px_0_rgba(255,255,255,0.55)] ring-0 backdrop-blur-md"
+            ? "mt-2 rounded-full border border-transparent bg-secondary/88 px-4 shadow-[0_10px_30px_-18px_rgba(15,23,42,0.45),0_1px_0_rgba(255,255,255,0.55)] ring-0 backdrop-blur-md dark:bg-secondary/76"
             : "border-transparent bg-transparent px-6"
         }`}
       >
