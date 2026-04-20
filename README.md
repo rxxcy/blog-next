@@ -2,6 +2,7 @@
 
 一个基于 `Next.js 16` 的个人博客项目，包含：
 - 首页信息展示
+- 项目页（`projects.json` 内容驱动）
 - 笔记系统（MDX、目录、代码高亮、复制、图片预览）
 - 相册系统（图集、封面、缩略图、密码访问）
 - Moments 页面
@@ -87,12 +88,14 @@ SITE_URL=https://your-domain.com
 - 不配置对应密码时，该分区默认公开。
 
 ## 内容目录初始化（重要）
-`content/` 已加入 `.gitignore`，默认不提交到 GitHub。
+`content/` 默认作为本地内容目录使用；其中 `content/projects/projects.json` 会随仓库维护，用于项目页数据。
 
 首次拉取仓库后，请手动创建内容目录：
 
 ```text
 content/
+  projects/
+    projects.json
   posts/
     2026/
   albums/
@@ -105,10 +108,31 @@ content/
 New-Item -ItemType Directory -Force content/posts/2026 | Out-Null
 New-Item -ItemType Directory -Force content/albums | Out-Null
 New-Item -ItemType Directory -Force content/moments | Out-Null
+New-Item -ItemType Directory -Force content/projects | Out-Null
 New-Item -ItemType Directory -Force public/albums | Out-Null
 ```
 
 ## 内容管理
+
+### 项目
+- 目录：`content/projects/projects.json`
+- 用途：项目页与首页项目统计的数据源
+
+示例：
+
+```json
+[
+  {
+    "id": "blog",
+    "title": "Blog",
+    "summary": "内容驱动的个人站点",
+    "year": 2026,
+    "category": "Web",
+    "status": "in_progress",
+    "tags": ["Next.js", "TypeScript", "MDX"]
+  }
+]
+```
 
 ### 笔记（MDX）
 - 目录：`content/posts/<year>/*.mdx`
@@ -176,6 +200,7 @@ pnpm album:generate <slug>
 pnpm dev
 pnpm build
 pnpm start
+pnpm test
 pnpm lint
 pnpm format
 pnpm album:new

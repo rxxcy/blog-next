@@ -38,7 +38,10 @@ pnpm-debug.log*
 /.vercel/
 
 # content (local data)
-/content/
+/content/*
+!/content/projects/
+/content/projects/*
+!/content/projects/projects.json
 /public/albums/
 
 # local tooling
@@ -52,3 +55,5 @@ Thumbs.db
 *.pem
 .idea/
 .vscode/
+
+docs/

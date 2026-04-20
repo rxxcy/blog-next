@@ -13,9 +13,9 @@ import {
   Suno,
 } from '@lobehub/icons'
 import { SkillIconsImage } from '@/components/skill-icons-image'
-import { PROJECTS } from '@/data/projects'
 import { readAlbumsList } from '@/lib/albums-data'
 import { readAllPosts } from '@/lib/posts'
+import { readProjects } from '@/lib/projects'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -165,14 +165,13 @@ const APPLACATIONS_ICONS = [
 ]
 
 async function getAboutMetrics(): Promise<AboutMetric[]> {
-  const [posts, { albums }] = await Promise.all([
+  const [posts, { albums }, projects] = await Promise.all([
     readAllPosts({ includeDraft: false }),
     readAlbumsList(),
+    readProjects(),
   ])
 
-  const completedProjects = PROJECTS.filter(
-    project => project.status === 'done',
-  ).length
+  const completedProjects = projects.filter(project => project.status === 'done').length
   const commitCountRaw = process.env.NEXT_PUBLIC_GIT_COMMIT_COUNT ?? ''
   const commitCount = Number.parseInt(commitCountRaw, 10)
   const commitCountText = Number.isFinite(commitCount)
@@ -195,7 +194,7 @@ async function getAboutMetrics(): Promise<AboutMetric[]> {
     {
       id: 'projects',
       label: 'PROJECTS',
-      value: `${completedProjects}/${PROJECTS.length}`,
+      value: `${completedProjects}/${projects.length}`,
       hint: '已完成',
     },
     {

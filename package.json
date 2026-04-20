@@ -6,6 +6,7 @@
     "dev": "next dev -p 3070",
     "build": "next build",
     "start": "next start",
+    "test": "node ./test/run-tests.mts",
     "lint": "biome check",
     "format": "biome format --write",
     "album:new": "node scripts/new-album.mjs",

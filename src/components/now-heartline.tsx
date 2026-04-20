@@ -1,82 +1,63 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  buildWavePath,
+  getHeartRateDisplayState,
+  NOW_HEARTLINE_CONFIG,
+} from "@/lib/now-heartline";
 
 type NowHeartlineProps = {
   bpm: number;
+  connected: boolean;
 };
 
-const SAMPLE_COUNT = 90;
-const VIEWBOX_WIDTH = 100;
-const VIEWBOX_HEIGHT = 100;
 const bpmSeries = [72, 73, 72, 71, 72, 74, 73, 72] as const;
 
-function waveValueAt(position: number, phase: number) {
-  const progress = (position + phase) % 1;
-  const baseline =
-    0.56 + Math.sin((position + phase * 0.35) * Math.PI * 5) * 0.01;
-
-  if (progress < 0.12) return baseline;
-  if (progress < 0.18) return baseline - 0.04;
-  if (progress < 0.22) return baseline + 0.08;
-  if (progress < 0.25) return baseline - 0.18;
-  if (progress < 0.28) return 0.08;
-  if (progress < 0.31) return baseline + 0.28;
-  if (progress < 0.35) return baseline - 0.1;
-  if (progress < 0.42) return baseline + 0.04;
-  return baseline;
-}
-
-function buildWavePath(phase: number) {
-  const points = Array.from({ length: SAMPLE_COUNT }, (_, index) => {
-    const x = (index / (SAMPLE_COUNT - 1)) * VIEWBOX_WIDTH;
-    const position = index / (SAMPLE_COUNT - 1);
-    const y = waveValueAt(position, phase) * VIEWBOX_HEIGHT;
-    return { x, y, key: `${x.toFixed(2)}-${y.toFixed(2)}` };
-  });
-
-  const linePath = points
-    .map(
-      (point, index) =>
-        `${index === 0 ? "M" : "L"} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`,
-    )
-    .join(" ");
-
-  const areaPath = `${linePath} L ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT} L 0 ${VIEWBOX_HEIGHT} Z`;
-  return { linePath, areaPath, points };
-}
-
-export function NowHeartline({ bpm }: NowHeartlineProps) {
+export function NowHeartline({ bpm, connected }: NowHeartlineProps) {
   const [phase, setPhase] = useState(0);
   const [displayBpm, setDisplayBpm] = useState(bpm);
+  const displayState = getHeartRateDisplayState(connected, displayBpm);
 
   useEffect(() => {
+    if (!connected) {
+      return;
+    }
+
     let bpmIndex = 0;
 
     const waveTimer = window.setInterval(() => {
-      setPhase((current) => (current + 0.035) % 1);
-    }, 90);
+      setPhase((current) => (current + NOW_HEARTLINE_CONFIG.phaseStep) % 1);
+    }, NOW_HEARTLINE_CONFIG.waveIntervalMs);
 
     const bpmTimer = window.setInterval(() => {
       bpmIndex = (bpmIndex + 1) % bpmSeries.length;
       setDisplayBpm(bpmSeries[bpmIndex]);
-    }, 1600);
+    }, NOW_HEARTLINE_CONFIG.bpmIntervalMs);
 
     return () => {
       window.clearInterval(waveTimer);
       window.clearInterval(bpmTimer);
     };
-  }, []);
+  }, [connected]);
 
   const { linePath } = buildWavePath(phase);
+
+  if (!connected) {
+    return (
+      <div className="flex h-28 items-center justify-center text-sm text-muted-foreground">
+        未连接到服务器
+      </div>
+    );
+  }
 
   return (
     <div className="h-28">
       <svg
-        viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
+        viewBox={`0 0 ${NOW_HEARTLINE_CONFIG.viewboxWidth} ${NOW_HEARTLINE_CONFIG.viewboxHeight}`}
         preserveAspectRatio="none"
         className="h-full w-full"
-        aria-label={`${displayBpm} bpm`}
+        aria-label={displayState.ariaLabel}
         role="img"
       >
         <path
