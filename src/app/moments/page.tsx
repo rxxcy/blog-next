@@ -76,18 +76,30 @@ export default async function MomentsPage() {
 
                 {moment.images?.length ? (
                   <ul className="mt-2 flex flex-wrap gap-2">
-                    {moment.images.map((image, imageIndex) => (
-                      <li key={`${moment.id}-${image.src}-${imageIndex}`}>
-                        <div className="overflow-hidden">
-                          <MomentImageThumb
-                            src={image.src}
-                            alt={image.alt ?? `${moment.id}-${imageIndex + 1}`}
-                            width={image.width ?? 72}
-                            height={image.height ?? 72}
-                          />
-                        </div>
-                      </li>
-                    ))}
+                    {moment.images.map((image, imageIndex) => {
+                      const imageKey = [
+                        moment.id,
+                        image.src,
+                        image.alt ?? "",
+                        image.width ?? "",
+                        image.height ?? "",
+                      ].join("|");
+
+                      return (
+                        <li key={imageKey}>
+                          <div className="overflow-hidden">
+                            <MomentImageThumb
+                              src={image.src}
+                              alt={
+                                image.alt ?? `${moment.id}-${imageIndex + 1}`
+                              }
+                              width={image.width ?? 72}
+                              height={image.height ?? 72}
+                            />
+                          </div>
+                        </li>
+                      );
+                    })}
                   </ul>
                 ) : null}
               </article>

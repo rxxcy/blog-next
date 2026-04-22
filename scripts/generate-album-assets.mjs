@@ -51,7 +51,10 @@ function hasAlbumPassword(value) {
 }
 
 function isAlbumProtected(albumMeta) {
-  return Boolean(albumMeta?.requiresPassword) || hasAlbumPassword(albumMeta?.password);
+  return (
+    Boolean(albumMeta?.requiresPassword) ||
+    hasAlbumPassword(albumMeta?.password)
+  );
 }
 
 function normalizeDimensionsForOrientation(metadata) {
@@ -73,7 +76,9 @@ function normalizeDimensionsForOrientation(metadata) {
 
 async function collectAlbumFolders(albumsRoot) {
   const entries = await fs.readdir(albumsRoot, { withFileTypes: true });
-  return entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name);
+  return entries
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name);
 }
 
 async function processAlbum({ sharp, albumsRoot, publicRoot, folderName }) {
@@ -105,7 +110,11 @@ async function processAlbum({ sharp, albumsRoot, publicRoot, folderName }) {
   const coverDir = path.join(outputRoot, "cover");
   const thumbsDir = path.join(outputRoot, "thumbs");
   const webpDir = path.join(outputRoot, "webp");
-  await Promise.all([ensureDir(coverDir), ensureDir(thumbsDir), ensureDir(webpDir)]);
+  await Promise.all([
+    ensureDir(coverDir),
+    ensureDir(thumbsDir),
+    ensureDir(webpDir),
+  ]);
 
   const items = [];
   for (const file of files) {
@@ -138,20 +147,32 @@ async function processAlbum({ sharp, albumsRoot, publicRoot, folderName }) {
     });
   }
 
-  const coverName = files.includes(albumMeta.cover) ? albumMeta.cover : files[0];
+  const coverName = files.includes(albumMeta.cover)
+    ? albumMeta.cover
+    : files[0];
   const coverInput = path.join(originalDir, coverName);
   const coverWebp = path.join(coverDir, "cover.webp");
   const coverJpg = path.join(coverDir, "cover.jpg");
 
   await sharp(coverInput)
     .rotate()
-    .resize({ width: COVER_WIDTH, height: COVER_HEIGHT, fit: "cover", position: "attention" })
+    .resize({
+      width: COVER_WIDTH,
+      height: COVER_HEIGHT,
+      fit: "cover",
+      position: "attention",
+    })
     .webp({ quality: COVER_WEBP_QUALITY })
     .toFile(coverWebp);
 
   await sharp(coverInput)
     .rotate()
-    .resize({ width: COVER_WIDTH, height: COVER_HEIGHT, fit: "cover", position: "attention" })
+    .resize({
+      width: COVER_WIDTH,
+      height: COVER_HEIGHT,
+      fit: "cover",
+      position: "attention",
+    })
     .jpeg({ quality: COVER_JPEG_QUALITY, progressive: true })
     .toFile(coverJpg);
 
@@ -213,9 +234,7 @@ async function main() {
   try {
     ({ default: sharp } = await import("sharp"));
   } catch {
-    console.error(
-      "缺少 sharp 依赖。请先执行: pnpm add -D sharp",
-    );
+    console.error("缺少 sharp 依赖。请先执行: pnpm add -D sharp");
     process.exitCode = 1;
     return;
   }
@@ -238,9 +257,7 @@ async function main() {
 
   if (targetFolders.length === 0) {
     console.error(
-      targetSlug
-        ? `未找到图集: ${targetSlug}`
-        : "未找到可处理的图集目录。",
+      targetSlug ? `未找到图集: ${targetSlug}` : "未找到可处理的图集目录。",
     );
     process.exitCode = 1;
     return;

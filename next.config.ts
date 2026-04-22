@@ -1,5 +1,5 @@
-import type { NextConfig } from "next";
 import { execSync } from "node:child_process";
+import type { NextConfig } from "next";
 
 function resolveGitCommitHash() {
   const envHash =

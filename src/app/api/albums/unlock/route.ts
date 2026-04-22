@@ -93,7 +93,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  const configuredPassword = typeof meta.password === "string" ? meta.password : "";
+  const configuredPassword =
+    typeof meta.password === "string" ? meta.password : "";
   if (!configuredPassword) {
     return NextResponse.json(
       { message: "该图集已标记为受保护，但未配置密码。" },
@@ -112,12 +113,16 @@ export async function POST(request: Request) {
   );
   unlockedAlbums.add(slug);
 
-  response.cookies.set(ALBUMS_AUTH_COOKIE, serializeUnlockedAlbumsCookie(unlockedAlbums), {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: ALBUMS_COOKIE_MAX_AGE,
-  });
+  response.cookies.set(
+    ALBUMS_AUTH_COOKIE,
+    serializeUnlockedAlbumsCookie(unlockedAlbums),
+    {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: ALBUMS_COOKIE_MAX_AGE,
+    },
+  );
   return response;
 }

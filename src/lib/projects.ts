@@ -21,7 +21,11 @@ type ReadProjectsOptions = {
 };
 
 const PROJECTS_FILE_PATH = ["content", "projects", "projects.json"] as const;
-const PROJECT_CATEGORIES = new Set<ProjectCategory>(["Web", "Tool", "Experiment"]);
+const PROJECT_CATEGORIES = new Set<ProjectCategory>([
+  "Web",
+  "Tool",
+  "Experiment",
+]);
 const PROJECT_STATUSES = new Set<ProjectStatus>([
   "planned",
   "in_progress",
@@ -55,7 +59,9 @@ function parseProjectItem(value: unknown): ProjectItem | null {
   const title = isNonEmptyString(item.title) ? item.title.trim() : "";
   const summary = isNonEmptyString(item.summary) ? item.summary.trim() : "";
   const year =
-    typeof item.year === "number" && Number.isInteger(item.year) ? item.year : NaN;
+    typeof item.year === "number" && Number.isInteger(item.year)
+      ? item.year
+      : NaN;
   const category = item.category;
   const status = item.status;
   const tags = normalizeTags(item.tags);

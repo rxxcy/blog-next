@@ -64,7 +64,9 @@ async function ask(rl, label, { required = false, defaultValue = "" } = {}) {
 async function askYesNo(rl, label, defaultYes = false) {
   const hint = defaultYes ? "Y/n" : "y/N";
   while (true) {
-    const value = (await rl.question(`${label} (${hint}): `)).trim().toLowerCase();
+    const value = (await rl.question(`${label} (${hint}): `))
+      .trim()
+      .toLowerCase();
     if (!value) return defaultYes;
     if (value === "y" || value === "yes") return true;
     if (value === "n" || value === "no") return false;
@@ -95,7 +97,7 @@ async function main() {
 
     const title = await ask(rl, "图集标题", { required: true });
 
-    let slugDefault = toSlug(title) || `album-${Date.now()}`;
+    const slugDefault = toSlug(title) || `album-${Date.now()}`;
     let slug = await ask(rl, "图集 slug（小写字母/数字/短横线）", {
       defaultValue: slugDefault,
       required: true,
@@ -103,7 +105,10 @@ async function main() {
 
     while (!SLUG_PATTERN.test(slug)) {
       console.log("slug 格式不合法，示例：2026-city-walk");
-      slug = await ask(rl, "请重新输入 slug", { defaultValue: slugDefault, required: true });
+      slug = await ask(rl, "请重新输入 slug", {
+        defaultValue: slugDefault,
+        required: true,
+      });
     }
 
     const description = await ask(rl, "图集描述");
@@ -156,7 +161,11 @@ async function main() {
       ...(requiresPassword && passwordHint ? { passwordHint } : {}),
     };
 
-    await fs.writeFile(albumFile, `${JSON.stringify(albumData, null, 2)}\n`, "utf8");
+    await fs.writeFile(
+      albumFile,
+      `${JSON.stringify(albumData, null, 2)}\n`,
+      "utf8",
+    );
 
     if (makePublicDirs) {
       const publicBase = path.join(root, "public", "albums", slug);

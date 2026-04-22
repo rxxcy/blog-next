@@ -17,10 +17,10 @@ function getSlugFromAlbumsPath(input: string | null) {
 
   try {
     const pathname = input.startsWith("/")
-      ? input.split("?")[0]?.split("#")[0] ?? ""
+      ? (input.split("?")[0]?.split("#")[0] ?? "")
       : new URL(input).pathname;
     const parts = pathname.split("/").filter(Boolean);
-    const slug = parts[0] === "albums" ? parts[1] ?? "" : "";
+    const slug = parts[0] === "albums" ? (parts[1] ?? "") : "";
     return slug && isValidAlbumSlug(slug) ? slug : "";
   } catch {
     return "";

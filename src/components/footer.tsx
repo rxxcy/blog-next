@@ -1,5 +1,5 @@
-import packageJson from "../../package.json";
 import nextPackageJson from "next/package.json";
+import packageJson from "../../package.json";
 
 function normalizeVersion(raw: string | undefined) {
   if (!raw) return "unknown";

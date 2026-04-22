@@ -52,7 +52,9 @@ export function ProjectsList({ projects }: { projects: ProjectItem[] }) {
   return (
     <div className="space-y-8">
       {STATUS_SECTIONS.map((section) => {
-        const items = projects.filter((project) => project.status === section.key);
+        const items = projects.filter(
+          (project) => project.status === section.key,
+        );
 
         return (
           <section key={section.key} className="space-y-3">

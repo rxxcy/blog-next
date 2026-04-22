@@ -45,6 +45,29 @@ docker compose --env-file .env.docker up -d --build
 ```
 4. 访问：`http://localhost:3000`
 
+### Debian 一键更新并重建容器
+适合已经在服务器上 `git clone` 过本仓库的场景：
+
+```bash
+bash scripts/deploy-debian.sh
+```
+
+指定分支：
+
+```bash
+bash scripts/deploy-debian.sh main
+```
+
+脚本会自动执行：
+- `git fetch` + `git pull --ff-only`
+- 自动写入 `GIT_COMMIT_SHA` 和 `GIT_COMMIT_COUNT`
+- `docker compose --env-file .env.docker up -d --build --remove-orphans`
+
+注意：
+- 首次运行如果缺少 `.env.docker`，脚本会从 `.env.docker.example` 自动复制一份。
+- 如果仓库里存在已跟踪文件的本地修改，脚本会直接退出，避免把你的服务器配置拉乱。
+- 当前 `docker-compose.yml` 端口映射是 `13000:3000`，所以默认访问地址应为 `http://服务器IP:13000`。
+
 ### 使用 Docker 命令
 Linux/macOS:
 ```bash
