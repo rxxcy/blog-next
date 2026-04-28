@@ -157,6 +157,66 @@ New-Item -ItemType Directory -Force public/albums | Out-Null
 ]
 ```
 
+### 网址导航（Links）
+- 默认数据文件：`content/links/links.json`
+- favicon 输出目录：`public/image/links/`
+
+推荐结构：
+
+```json
+[
+  {
+    "category": "AI",
+    "description": "模型、工作台与常用入口",
+    "items": [
+      {
+        "title": "OpenAI",
+        "url": "https://platform.openai.com",
+        "summary": "API 与控制台",
+        "icon": "",
+        "pinned": true,
+        "weight": 10
+      }
+    ]
+  },
+  {
+    "category": "开发",
+    "items": [
+      {
+        "title": "GitHub",
+        "url": "https://github.com",
+        "summary": "代码托管",
+        "icon": ""
+      }
+    ]
+  }
+]
+```
+
+自动抓取缺失 favicon：
+
+```bash
+pnpm links:favicons
+```
+
+常用参数：
+
+```bash
+# 预览将要抓取哪些站点，不写入文件
+pnpm links:favicons -- --dry-run
+
+# 强制重抓所有 item 的 icon
+pnpm links:favicons -- --force
+
+# 指定自定义数据文件
+pnpm links:favicons -- --file content/links/links.json
+```
+
+说明：
+- 脚本默认只处理 `icon` 为空的 item。
+- 会优先复用同域名已存在的本地图标，避免重复下载。
+- 抓取成功后会把 `icon` 回写成类似 `/image/links/github-com.ico` 的本地路径。
+
 ### 笔记（MDX）
 - 目录：`content/posts/<year>/*.mdx`
 - 示例：`content/posts/2026/hello.mdx`
@@ -228,6 +288,7 @@ pnpm lint
 pnpm format
 pnpm album:new
 pnpm album:generate
+pnpm links:favicons
 ```
 
 ## 目录结构

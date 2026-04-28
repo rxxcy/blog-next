@@ -11,7 +11,8 @@
     "lint": "biome check",
     "format": "biome format --write",
     "album:new": "node scripts/new-album.mjs",
-    "album:generate": "node scripts/generate-album-assets.mjs"
+    "album:generate": "node scripts/generate-album-assets.mjs",
+    "links:favicons": "node scripts/fetch-link-favicons.mjs"
   },
   "dependencies": {
     "@lobehub/icons": "^5.5.4",

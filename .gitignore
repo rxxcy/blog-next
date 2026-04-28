@@ -37,11 +37,8 @@ pnpm-debug.log*
 # deployment
 /.vercel/
 
-# content (local data)
-/content/*
-!/content/projects/
-/content/projects/*
-!/content/projects/projects.json
+# content (separate repo)
+/content/
 /public/albums/
 
 # local tooling
